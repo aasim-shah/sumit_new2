@@ -21,28 +21,37 @@
       </p>
       <% } %>
 
-        <form method="post" action="/register" class="w-full">
+      
+      <form method="post" action="/register" class="w-full">
+        
+      <input  type="hidden" name="otpValue" placeholder="Enter your OTP  ..." 
+      class=" rounded-md  py-2 px-3 outline-none w-8/12" id="otpValue">
+
           <div class="flex flex-row gap-1 mb-3">
-            <input type="text" name="firstName" placeholder="First Name ..." id=""
+            <input required type="text" name="firstName" placeholder="First Name ..." id=""
               class=" rounded-md border-2 py-2 px-3 w-6/12">
             <input type="text" name="lastName" placeholder="Last Name ..." id=""
               class=" rounded-md border-2 py-2 px-3 w-6/12">
           </div>
           <div class="flex flex-row gap-1 mb-3 w-full">
             <div class="flex flex-row justify-between pr-1 items-center rounded-md border-2 w-[12rem] sm:w-[13rem] mb-3">
-              <input type="number" id="phone" name="phone" placeholder="Phone  ..."
-                class=" outline-none py-2 px-3 w-8/12">
+              <input required type="number" id="phone" name="phone" placeholder="Phone  ..."
+                class=" outline-none py-2 px-3 w-full">
               <button class=" h-8  w-16 px-3 bg-green-400 rounded-md font-semibold" type="button"
                 id="sendBtn">Send</button>
             </div>
             <div class="flex flex-row justify-between pr-1 items-center rounded-md border-2 w-[12rem] sm:w-[13rem] mb-3">
-              <input type="number" name="otp" placeholder="Enter your OTP  ..." id=""
-                class=" rounded-md  py-2 px-3 outline-none w-8/12">
-              <button class=" h-8 font-semibold w-16 px-3 bg-green-400 rounded-md ">Verify</button>
+              <input required type="number" name="inputOtp" placeholder="Enter your OTP  ..." id="inputOtp"
+                class=" rounded-md  py-2 px-3 outline-none w-full">
+            
             </div>
           </div>
           <div class="mb-3">
-            <input name="password" type="password" placeholder="Password "
+            <input required name="email" type="email" placeholder="Email "
+              class=" rounded-md border-2 py-2 px-3 w-full">
+          </div>
+          <div class="mb-3">
+            <input required name="password" type="password" placeholder="Password "
               class=" rounded-md border-2 py-2 px-3 w-full">
           </div>
 
@@ -69,14 +78,7 @@
 
 
   <script>
-    function generateOTP() {
-      var digits = '0123456789';
-      let OTP = '';
-      for (let i = 0; i < 6; i++) {
-        OTP += digits[Math.floor(Math.random() * 10)];
-      }
-      return OTP;
-    }
+
   </script>
 
   <script>
@@ -84,28 +86,38 @@
       // Function to be called on button click
       function handleClick() {
         const phone = $("#phone").val()
-        const otp = generateOTP()
-        console.log({ otp })
+       
         if (phone && phone !== " ") {
-          axios({
-            url: "https://www.fast2sms.com/dev/bulkV2",
-            method: "post",
-            headers: { "authorization": "vTNLWtjHiSlzJCEkfbGVpnPmh7OxrQcgX6B9sd58qMyoFYR4ZIrDxhbHul5AvPe8sK3Xckm49aLSfpBn" },
-            data: {
-              "variables_values": otp,
-              "route": "otp",
-              "numbers": phone,
-            }
-          }).then((ee) => {
+        axios.get(`/get/otp/${phone}`)
+          .then((ee) => {
             console.log(ee.data);
+            $("#otpValue").val(ee.data)
           }).catch((err) => {
             console.log(err);
           });
         }
       }
+      // function verifyOtp() {
+      //   const phone = $("#phone").val()
+      //   const otpValue = $("#otpValue").val()
+      //   const inputOtp = $("#inputOtp").val()
+      //   console.log(otpValue + "otpvalue")
+      //   console.log(inputOtp + "otp Input")
+      //   if ( otpValue && otpValue === inputOtp) {
+      //   axios.post(`/verify_otp`  , {
+      //     phone , otp : otpValue
+      //   })
+      //     .then((ee) => {
+      //       console.log(ee.data);
+      //       $("#otpValue").val(ee.data)
+      //     }).catch((err) => {
+      //       console.log(err);
+      //     });
+      //   }
+      // }
 
-      // Attach click event handler to the button
       $('#sendBtn').on('click', handleClick);
+      // $('#verifyOtpBtn').on('click', verifyOtp);
     });
 
   </script>

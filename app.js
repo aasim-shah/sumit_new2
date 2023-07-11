@@ -9,6 +9,7 @@ const flash = require('express-flash')
 const passportLocal = require('passport-local').Strategy
 const session = require('express-session')
 const port = process.env.PORT || 5000;
+const axios = require("axios")
 const multer  = require('multer')
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -57,6 +58,8 @@ app.use(passport.session())
 
 
 
+
+
 passport.use(new passportLocal({usernameField : "email"},
   function(username, password, done) {
     userModel.findOne({ phone : username }, async function   (err, user) {
@@ -96,13 +99,18 @@ app.get("/register"  ,  async(req ,res) =>{
 
 
 app.post("/register" ,  async(req ,res) =>{
-  const {firstName , lastName , phone , password} = req.body
+  const {firstName , lastName , phone , password  , otpValue , inputOtp , email} = req.body
+  if(otpValue !== inputOtp){
+    req.flash('error'  , 'OTP does not matched !')
+  return res.redirect('/register')
+  }
   console.log({body : req.body})
   const hashPassword = await bcrypt.hash(password , 10)
-  const data  = new userModel({
+  const data  = userModel({
     firstName ,
     lastName ,
     phone ,
+    email,
     password : hashPassword
   })
 
@@ -125,7 +133,44 @@ app.post("/register" ,  async(req ,res) =>{
 
 })
 
+function generateOTP() {
+  var digits = '0123456789';
+  let OTP = '';
+  for (let i = 0; i < 6; i++) {
+    OTP += digits[Math.floor(Math.random() * 10)];
+  }
+  return OTP;
+}
 
+app.get("/get/otp/:number", (req, res) => {
+  var otp = generateOTP();
+  console.log({ otp })
+  console.log(req.params.number)
+  axios({
+      url: "https://www.fast2sms.com/dev/bulkV2",
+      method: "post",
+      headers: { "authorization": "vTNLWtjHiSlzJCEkfbGVpnPmh7OxrQcgX6B9sd58qMyoFYR4ZIrDxhbHul5AvPe8sK3Xckm49aLSfpBn" },
+      data: {
+          "variables_values": otp,
+          "route": "otp",
+          "numbers": req.params.number,
+      }
+  }).then((ee) => {
+      console.log(ee.data);
+  }).catch((err) => {
+      console.log(err);
+  });
+  res.send(otp);
+});
+
+
+
+app.post('/verify_otp', async(req ,res) =>{
+
+  const {otp , number} = req.body
+
+console.log(req.body)  
+});
 app.post('/login', 
   passport.authenticate('local', { failureRedirect: '/login' , failureFlash : true}),
   function(req, res) {
