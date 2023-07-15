@@ -15,17 +15,34 @@
         <p class="text-black py-2 bg-red-200 text-center my-2"><%= messages.error %></p>
         <% }  %>
 
-        <form method="post" action="/login">
+      <% if(stepper === 0){ %>
+        <form method="get" action="/get/loginOtp">
             <div class="mb-3">
-              <input type="text" name="email" placeholder="Phone " class="border-2 py-2 px-3 w-full" >
-            </div>
-            <div class="mb-3">
-              <input name="password" type="password" placeholder="Password " class="border-2 py-2 px-3 w-full">
+              <input type="text" name="phone" placeholder="Phone" id="phone" class="border-2 py-2 px-3 w-full" >
             </div>
             <div class="">
-              <button type="submit" class="py-1 px-3 bg-green-400 rounded-sm font-bold w-full">Login</button>
+              <button id="sendBtn" type="submit" class="py-1 px-3 bg-green-400 rounded-sm font-bold w-full">Login</button>
             </div>
           </form>
+        <%}%>
+
+       
+          <% if(stepper === 1){ %>
+
+          <form method="post" action="/authanticate">
+            <input  type="hidden" name="otp" placeholder="Enter your OTP  ..." 
+            class=" rounded-md  py-2 px-3 outline-none w-8/12" id="" value="<%= otp %>">
+            <input  type="hidden" name="phone" placeholder="Enter your Phone  ..." 
+            class=" rounded-md  py-2 px-3 outline-none w-8/12" id="otpValue" value="<%= phone %>">
+              <div class="mb-3">
+                <input type="text" name="inputOtp" placeholder="Enter Your OTP" id="inputOtp" class="border-2 py-2 px-3 w-full" >
+              </div>
+              <div class="">
+                <button  type="submit" class="py-1 px-3 bg-green-400 rounded-sm font-bold w-full">Verify</button>
+              </div>
+            </form>
+          <%}%>
+
           <div class="flex flex-row mt-3 justify-evenly">
             <p class="text-sm text-gray-500">Already Having  Account ? </p>
             <a href="/register" class="underline">Signup</a>
@@ -36,8 +53,35 @@
 
 
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js" integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"
+    integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<!-- 
+  <script>
+    $(document).ready(function () {
+      function handleClick() {
+        const phone = $("#phone").val()
+       
+        if (phone && phone !== " ") {
+        axios.get(`/get/otp/${phone}`)
+          .then((ee) => {
+            console.log(ee.data);
+            $("#otpValue").val(ee.data)
+            '<%= stepper %>' = 1
+          }).catch((err) => {
+            console.log(err);
+          });
+        }
+      }
+      $('#sendBtn').on('click', handleClick);
+    });
+
+  </script> -->
   </body>
 </html>
 

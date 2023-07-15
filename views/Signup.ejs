@@ -33,7 +33,7 @@
             <input type="text" name="lastName" placeholder="Last Name ..." id=""
               class=" rounded-md border-2 py-2 px-3 w-6/12">
           </div>
-          <div class="flex flex-row gap-1 mb-3 w-full">
+          <div class="flex flex-row gap-1 mb-1 w-full">
             <div class="flex flex-row justify-between pr-1 items-center rounded-md border-2 w-[12rem] sm:w-[13rem] mb-3">
               <input required type="number" id="phone" name="phone" placeholder="Phone  ..."
                 class=" outline-none py-2 px-3 w-full">
@@ -47,15 +47,7 @@
             
             </div>
           </div>
-          <div class="mb-3">
-            <input required name="email" type="email" placeholder="Email "
-              class=" rounded-md border-2 py-2 px-3 w-full">
-          </div>
-          <div class="mb-3">
-            <input required name="password" type="password" placeholder="Password "
-              class=" rounded-md border-2 py-2 px-3 w-full">
-          </div>
-
+         
           <div class="">
             <button type="submit" class="py-1 px-3 bg-green-400 rounded-md font-bold w-full text-white  ">R E G I S T E
               R</button>
@@ -98,27 +90,7 @@
           });
         }
       }
-      // function verifyOtp() {
-      //   const phone = $("#phone").val()
-      //   const otpValue = $("#otpValue").val()
-      //   const inputOtp = $("#inputOtp").val()
-      //   console.log(otpValue + "otpvalue")
-      //   console.log(inputOtp + "otp Input")
-      //   if ( otpValue && otpValue === inputOtp) {
-      //   axios.post(`/verify_otp`  , {
-      //     phone , otp : otpValue
-      //   })
-      //     .then((ee) => {
-      //       console.log(ee.data);
-      //       $("#otpValue").val(ee.data)
-      //     }).catch((err) => {
-      //       console.log(err);
-      //     });
-      //   }
-      // }
-
       $('#sendBtn').on('click', handleClick);
-      // $('#verifyOtpBtn').on('click', verifyOtp);
     });
 
   </script>
