@@ -4,7 +4,10 @@ const userSchema  = mongoose.Schema({
     firstName : String,
     lastName : String,
     phone : {type: String } ,
+    wallet1 : {type: Number } ,
+    wallet2 : {type: Number } ,
     profilePic : String,
+    gameMatching : {type : Boolean , default : false}
 
 })
 

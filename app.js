@@ -3,6 +3,8 @@ const app = express()
 var bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const userModel = require('./models/userModel')
+const withdrawModal = require('./models/withdrawModal')
+const depositModal = require('./models/depositModal')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const flash = require('express-flash')
@@ -32,20 +34,18 @@ mongoose.connect('mongodb://keptxtech:mardan8110@ac-oqhdud5-shard-00-00.v8w9wry.
 
 
 // Middleware function to check if the request contains a valid JWT token
-const authenticateToken = (req, res, next) => {
+const authenticateToken =   (req, res, next) => {
   const token = req.cookies.jwt_token || ''; // Extract token from the request cookies
-  console.log('cokkiess' , req.cookies)
-  console.log('token_from midde' , token)
   if (!token) {
     return res.redirect('/login')
-  }
+  } 
 
-  jwt.verify(token, "mysupersecret123", (err, decoded) => {
+  jwt.verify(token, "mysupersecret123", async (err, decoded) => {
     if (err) {
       return res.redirect('/login')
     }
-
-    req.userId = decoded.userId; // Store the decoded user ID in the request object for further use
+   const user = await userModel.findById({_id : decoded.userId})
+   req.user = user;
     next();
   });
 };
@@ -59,6 +59,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.set("view engine", "ejs")
 app.use(cookieParser());
+app.use(express.static('public'));
+
 
 
 
@@ -103,6 +105,81 @@ app.get("/login", async (req, res) => {
 
 app.get("/register", async (req, res) => {
   res.render('Signup')
+})
+
+app.get("/withdraw", authenticateToken, async (req, res) => {
+  res.render('Withdraw')
+})
+app.get("/deposit", authenticateToken , async (req, res) => {
+  res.render('Deposit' , {user : req.user})
+})
+// app.get("/playgame/:id", authenticateToken , async (req, res) => {
+//   const user = await userModel.findById({_id : req.user._id})
+//   const matched = await userModel.findOne({gameMatching : true})
+//   if(matched && matched._id !== req.user._id){
+//     console.log({matched})
+//     return  res.render('Playgame' , {user : req.user , matchFound : "user found"})
+//   }
+//   user.gameMatching = true;
+//   user.save()
+//   res.render('Playgame' , {user : req.user , matchFound : "no user"})
+// })
+
+
+const userQueue = [];
+
+app.get("/playgame/:id", authenticateToken , async (req, res) => {
+  try {
+    const loggedInUserId = req.user._id;
+    const user = await userModel.findById({_id : loggedInUserId})
+    user.gameMatching = true
+     await user.save()
+    const matchingUser = await userModel.findOne({ _id: { $ne: loggedInUserId }, gameMatching: true });
+    if (matchingUser) {
+  res.render('Playgame' , {user : req.user , matchedUser : matchingUser , popup : true})
+    } else {
+      res.render('Playgame' , {user : req.user , matchedUser : null , popup : false})
+    }
+
+
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+app.post("/withdraw", authenticateToken ,  async (req, res) => {
+  try {
+    console.log('requser' + req.user)
+    const {upiId , amount} = req.body
+    const newWithdrawl = withdrawModal({
+      upiId ,
+      amount,
+      userId  : req.user._id
+    })
+
+    await newWithdrawl.save()
+    req.flash('success', 'Request Sent Successfully  !')
+    res.render('Withdraw')
+  } catch (error) {
+    req.flash('error', 'Something Went Wrong , Try again !')
+  }
+})
+app.post("/deposit", authenticateToken ,  async (req, res) => {
+  try {
+    const { transactionId, amount} = req.body
+    const newDeposit = depositModal({
+      transactionId ,
+      amount,
+      userId  : req.user._id
+    })
+
+    await newDeposit.save()
+    req.flash('success', 'Request Sent Successfully  !')
+    res.render('Deposit')
+  } catch (error) {
+    req.flash('error', 'Something Went Wrong , Try again !')
+  }
 })
 
 
@@ -175,6 +252,7 @@ app.get("/get/otp/:number", (req, res) => {
 });
 app.get("/get/loginOtp", (req, res) => {
   var otp = generateOTP();
+  console.log({otp})
   axios({
     url: "https://www.fast2sms.com/dev/bulkV2",
     method: "post",
@@ -195,7 +273,8 @@ app.get("/get/loginOtp", (req, res) => {
 
 
 app.post('/authanticate', async (req ,res) =>{
-   
+  const oneMonthInMilliseconds = 30 * 24 * 60 * 60 * 1000;
+
   try{
       const { inputOtp, phone, otp } = req.body
       if (otp !== inputOtp) {
@@ -206,9 +285,9 @@ app.post('/authanticate', async (req ,res) =>{
       const user = await userModel.findOne({phone})
       console.log(user)
       if(user){
-        const token = jwt.sign({ userId: user._id }, "mysupersecret123", { expiresIn: '1m' });
+        const token = jwt.sign({ userId: user._id }, "mysupersecret123", { expiresIn: oneMonthInMilliseconds });
         console.log({token})
-        res.cookie('jwt_token', token);
+        res.cookie('jwt_token', token ,  { maxAge: oneMonthInMilliseconds });
         return res.redirect("/")
       }else{
         return res.redirect("/login")

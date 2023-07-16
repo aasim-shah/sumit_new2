@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Play Game</title>
+</head>
+
+<body class="h-[80vh] w-full flex justify-center items-center">
+
+  <div class="sm:w-4/12 w-10/12 mx-auto">
+    <% if(messages.error){%>
+      <p class="text-black py-2 bg-red-200 text-center my-5 rounded-md">
+        <%= messages.error %>
+      </p>
+      <% } %>
+    <% if(messages.success){%>
+      <p class="text-black py-2 bg-green-200 text-center my-5 rounded-md">
+        <%= messages.success %>
+      </p>
+      <% } %>
+
+    <% if(!matchedUser){%>
+
+    <div class="w-full flex flex-col justify-center items-center">
+        <p class="text-green-500">Please Wait ! We are looking for your match .</p>
+        <div id="timer" class="text-3xl font-semibold text-center my-2">03:00</div>
+        <button id="actionButton" disabled class="py-1  text-center bg-cyan-700 rounded-md px-3 text-white disabled:opacity-40 mt-4">Match Again</button>
+
+    </div>  
+    <%}%>
+  </div>
+
+  <div class="fixed top-0 left-0 w-full h-full flex items-center justify-center " id="popupp">
+    <div class="bg-gray-100 rounded-lg sm:w-4/12 w-10/12 shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">User Matched</h2>
+      <p class="text-sm " id="matchedUserName"></p>
+      <p class="text-gray-500 mb-3" id="matchedUserPhone" ></p>
+    <div class="flex flex-row justify-end gap-3">
+        <button id="closePopup" class="px-4 py-[3px] bg-blue-500 text-white rounded hover:bg-blue-600">Close</button>
+        <a href="#"  class="px-4 py-1 bg-yellow-500 text-black font-semibold rounded hover:bg-yellow-600">Chat</a>
+    </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"
+    integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  
+  <script>
+    $(document).ready(function() {
+      var duration = 180; // 3 minutes in seconds
+
+      function updateTimer() {
+        var minutes = Math.floor(duration / 60);
+        var seconds = duration % 60;
+        var formattedTime =
+          (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        $('#timer').text(formattedTime);
+
+        if (duration <= 0) {
+          clearInterval(timerInterval);
+          $('#timer').text('');
+          $('#actionButton').prop('disabled', false); // Enable the button
+        }
+
+        duration--;
+      }
+
+      // Call updateTimer every second
+      var timerInterval = setInterval(updateTimer, 1000);
+      $('#actionButton').click(() =>{
+        console.log("fsdfs")
+        window.location=`/playgame/<%= user._id %>`
+      })
+
+    });
+  </script>
+
+
+
+<script>
+    $('#popupp').hide();
+    // Function to show the popup
+    function showPopup(matchedUser) {
+        $('#matchedUserName').text(`Name. ${matchedUser.firstName} ${matchedUser.lastName}`);
+        $('#matchedUserPhone').text(`Phone . ${matchedUser.phone}`);
+        $('#popupOverlay').show();
+        $('#popupp').show();
+    }
+
+    // Function to hide the popup
+    function hidePopup() {
+      $('#popupOverlay').hide();
+    }
+
+    // Show the popup when the page loads
+    // You can trigger this function when you receive the matching response from the server
+    $(document).ready(function() {
+      var matchedUser = <%- JSON.stringify(matchedUser) %>;
+     const popup= <%- JSON.parse(popup) %>;
+
+        console.log({popup})
+        console.log({matchedUser})
+        if(popup){
+            showPopup(matchedUser);
+        }
+    
+    });
+
+    // Close the popup when the "Close" button is clicked
+    $(document).on('click', '#closePopup', function() {
+      hidePopup();
+    });
+  </script>
+</body>
+
+
+</html>

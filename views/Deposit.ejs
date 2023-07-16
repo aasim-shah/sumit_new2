@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Deposit Amount</title>
+</head>
+
+<body class="h-[80vh] w-full flex justify-center items-center">
+
+  <div class="sm:w-4/12 w-10/12 mx-auto">
+    <% if(messages.error){%>
+      <p class="text-black py-2 bg-red-200 text-center my-5 rounded-md">
+        <%= messages.error %>
+      </p>
+      <% } %>
+    <% if(messages.success){%>
+      <p class="text-black py-2 bg-green-200 text-center my-5 rounded-md">
+        <%= messages.success %>
+      </p>
+      <% } %>
+
+
+      <div class="w-full flex justify-center items-center my-3">
+        <img src="/uploads/sumit_qr.jpeg" class="w-7/12 " alt="">
+      </div>
+      <form method="post" action="/deposit" class="w-full">
+        
+        <input type="number" name="amount" class="py-2 outline-none w-full  border-2 rounded-md mb-2 px-3" placeholder="Enter amount " id="">
+        <input type="text" name="transactionId" class="py-2 outline-none w-full  border-2 rounded-md mb-2 px-3" placeholder="Enter Your TransactionId " id="">
+          <div class="flex flex-row gap-2">
+            <button  type="submit" class="py-1 px-3 bg-green-400 rounded-md font-bold w-full text-white  ">Withdraw</button>
+            <a href="/playgame/<%= user._id %>" type="submit" class="py-1 px-3 bg-cyan-700 text-center rounded-md font-bold w-full text-white  ">Play Game</a>
+          </div>
+          
+        </form>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"
+    integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+</body>
+
+</html>

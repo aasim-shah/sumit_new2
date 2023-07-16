@@ -18,7 +18,7 @@
       <% if(stepper === 0){ %>
         <form method="get" action="/get/loginOtp">
             <div class="mb-3">
-              <input type="text" name="phone" placeholder="Phone" id="phone" class="border-2 py-2 px-3 w-full" >
+              <input type="text" name="phone" placeholder="Phone" id="phone" class="border-2 py-2 px-3 w-full outline-none rounded-md" >
             </div>
             <div class="">
               <button id="sendBtn" type="submit" class="py-1 px-3 bg-green-400 rounded-sm font-bold w-full">Login</button>
@@ -35,7 +35,7 @@
             <input  type="hidden" name="phone" placeholder="Enter your Phone  ..." 
             class=" rounded-md  py-2 px-3 outline-none w-8/12" id="otpValue" value="<%= phone %>">
               <div class="mb-3">
-                <input type="text" name="inputOtp" placeholder="Enter Your OTP" id="inputOtp" class="border-2 py-2 px-3 w-full" >
+                <input type="text" name="inputOtp" placeholder="Enter Your OTP" id="inputOtp" class="border-2 py-2 px-3 w-full  outline-none rounded-md" >
               </div>
               <div class="">
                 <button  type="submit" class="py-1 px-3 bg-green-400 rounded-sm font-bold w-full">Verify</button>
